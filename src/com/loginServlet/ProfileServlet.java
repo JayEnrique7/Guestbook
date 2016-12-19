@@ -15,20 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class ProfileServlet
+ * Servlet implementation class ProfileServlet, this class show the textarea and messengers from the user.
  */
 @WebServlet("/profileservlet")
 public class ProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ProfileServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -36,29 +27,41 @@ public class ProfileServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter out = resp.getWriter();
-		req.getRequestDispatcher("logout.html").include(req, resp);
-		req.getRequestDispatcher("profile.html").include(req, resp);
+		String sqlName = "SELECT * FROM user WHERE id=?;";
 		String sql = "SELECT text FROM texts WHERE owner=?";
 		HttpSession session = req.getSession();
 		int id = (int) session.getAttribute("id");
 		Connection conn = (Connection) getServletContext().getAttribute("DBConn");
 
 		try{
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, id);
+			PreparedStatement stmt1 = conn.prepareStatement(sqlName);
+			PreparedStatement stmt2 = conn.prepareStatement(sql);
+			stmt1.setInt(1, id);
+			stmt2.setInt(1, id);
 
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()){
-				out.println("* ");
-				out.println(rs.getString("text"));
+			ResultSet rs1 = stmt1.executeQuery();
+			ResultSet rs2 = stmt2.executeQuery();
+
+			while(rs1.next()){
+
+				req.getRequestDispatcher("logout.html").include(req, resp);
+				out.println("<b><font color=red>The " + rs1.getString("email") + "'s guestbook</font></b>");
+				req.getRequestDispatcher("profile.html").include(req, resp);
 				out.println("<br>");
-			}
+
+				rs2.afterLast();
+				while(rs2.previous()){
+
+					out.println("<font color='white'>° " + rs2.getString("text") + "</font><br>");
+
+				}		
+			}	
 		}
+
 		catch(SQLException e){
 
 			e.printStackTrace();
 		}
-
+		out.close();
 	}
-
 }
