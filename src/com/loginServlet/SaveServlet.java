@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class SaveServlet
+ * Servlet implementation class SaveServlet, save the messengers and update.
  */
 @WebServlet("/SaveServlet")
 public class SaveServlet extends HttpServlet {
@@ -29,43 +29,96 @@ public class SaveServlet extends HttpServlet {
 
 
 		PrintWriter out = resp.getWriter();
-		req.getRequestDispatcher("logout.html").include(req, resp);
 
 		String sql = "INSERT INTO texts(text, owner) VALUES (?, ?)";
 		String sqlGet = "SELECT text FROM texts WHERE owner=?";
-		String text = req.getParameter("textarea");
+		String text = req.getParameter("textarea");		
+		String sqlName = "SELECT * FROM user WHERE id=?;";
+
 		HttpSession session = req.getSession();
 		int id = (int) session.getAttribute("id");
 		Connection conn = (Connection) getServletContext().getAttribute("DBConn");
+		
+		/**
+		 * the if method blocked blank messengers.
+		 */
 
-		try {
+		if(text == null || text.equals("") || text.equals(" ")){
 
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			PreparedStatement stmt2 = conn.prepareStatement(sqlGet);
-			stmt.setString(1,text);
-			stmt.setInt(2, id);
-			stmt2.setInt(1, id);
+			try {
 
-			stmt.executeUpdate();
-			req.getRequestDispatcher("profile.html").include(req, resp);
-			ResultSet rs = stmt2.executeQuery();
-			while(rs.next()){
-				out.println("* ");
-				out.println(rs.getString("text"));
-				out.println("<br>");
+				PreparedStatement stmtName = conn.prepareStatement(sqlName);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				PreparedStatement stmt2 = conn.prepareStatement(sqlGet);
+
+				stmtName.setInt(1, id);
+				stmt.setString(1, text);
+				stmt.setInt(2, id);
+				stmt2.setInt(1, id);
+
+				ResultSet rsName = stmtName.executeQuery();
+				ResultSet rs = stmt2.executeQuery();
+
+				while(rsName.next()){
+
+					req.getRequestDispatcher("logout.html").include(req, resp);
+					out.println("<b><font color='red'>The " + rsName.getString("email") + "'s guestbook</font></b>");
+					req.getRequestDispatcher("profile.html").include(req, resp);
+					out.println("<font color='red'>You can't leave a blank greeting, come dude, leave a cute message</font><br>");
+
+					rs.afterLast();
+					while(rs.previous()){
+						out.println("<font color='white'>° " + rs.getString("text") + "</font><br>");
+					}
+
+				}
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 
 			}
-
-
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
+			out.close();
 		}
-		out.close();
+
+		else{
+
+			try {
+
+				PreparedStatement stmtName = conn.prepareStatement(sqlName);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				PreparedStatement stmt2 = conn.prepareStatement(sqlGet);
+
+				stmtName.setInt(1, id);
+				stmt.setString(1, text);
+				stmt.setInt(2, id);
+				stmt2.setInt(1, id);
+				stmt.executeUpdate();
+
+				ResultSet rsName = stmtName.executeQuery();
+				ResultSet rs = stmt2.executeQuery();
+
+				while(rsName.next()){
+
+					req.getRequestDispatcher("logout.html").include(req, resp);
+					out.println("<b><font color=red>The " + rsName.getString("email") + "'s guestbook</font></b>");
+					req.getRequestDispatcher("profile.html").include(req, resp);
+					out.println("<br>");
+
+					rs.afterLast();
+					while(rs.previous()){
+						out.println("<font color='white'>° " + rs.getString("text") + "</font><br>");
+					}
+				}
+			}
+
+			catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			out.close();
+			// TODO Auto-generated method stub
+		}
 	}
-	// TODO Auto-generated method stub
-
-
 }
