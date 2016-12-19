@@ -5,9 +5,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>New users</title>
+
+		<link rel="stylesheet" href="index.css"/>
 </head>
 	<body>
-		<a href="login.jsp">Login</a>
+		<a href="login.jsp"><h2>Login</h2></a>
 		<form action="registerServlet" method="post">
 			<input type="text" placeholder="Enter name" name="name"/>
 	<br>
