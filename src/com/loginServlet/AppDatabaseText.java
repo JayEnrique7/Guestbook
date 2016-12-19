@@ -9,6 +9,10 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import com.loginServlet.DatabaseConn;
 
+/**
+ *this class created the attribute "DBConn" to connect the database with the java code
+ */
+
 @WebListener
 public class AppDatabaseText  implements ServletContextListener{
 
@@ -47,8 +51,3 @@ public class AppDatabaseText  implements ServletContextListener{
 
 
 }
-
-
-
-
-
