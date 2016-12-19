@@ -1,0 +1,13 @@
+@CHARSET "ISO-8859-1";
+
+body {
+    background-image: url(css-background-image-HD3.jpg);
+   
+}
+
+.welcome{
+    text-align: center;
+    margin-top: 20.5%;
+    font-size: 300%;
+    color: white;
+}
