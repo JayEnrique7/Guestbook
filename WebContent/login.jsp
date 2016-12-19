@@ -2,9 +2,16 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html>
-<body>
-	<a href="register.jsp">Subscribe</a>
+<head>
 
+	<title>The Guestbook</title>
+
+		<link rel="stylesheet" href="index.css"/>
+
+</head>
+
+<body>
+	<a href="register.jsp"><h2>Subscribe</h2></a>
 		<form action="LoginServlet" method="post">
 				<input type="text" placeholder="Enter name" name="name"/>
 					<br>
