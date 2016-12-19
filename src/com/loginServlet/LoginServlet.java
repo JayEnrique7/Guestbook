@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet{
-
+	private static final long serialVersionUID = 1L;
 	/*
 	 * (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -24,6 +24,9 @@ public class LoginServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
+		/**
+		 * A class check out if the name and password is correctly, and this send a session to the user.
+		 */
 
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
@@ -33,19 +36,10 @@ public class LoginServlet extends HttpServlet{
 		String password = req.getParameter("password");
 
 
-
-		if(name == null || name.equals("") || name == (" ") || password == null || password.equals("") || password.equals(" ")){
-
-			req.getRequestDispatcher("login.jsp").include(req, resp);
-			out.println("<font color=red>" + "Try again!" + "</font>");
-			out.close();
-
-		}
-
 		if(validLogin (name, password, req)){
 
 			req.getRequestDispatcher("link.html").include(req, resp);
-			out.print("Welcome " + name);
+			out.print("<h2><font color=white>Welcome " + name + "</font></h2>");
 			HttpSession session = req.getSession();
 			int id = (int) req.getAttribute("id");
 			session.setAttribute("name", name);
@@ -55,9 +49,33 @@ public class LoginServlet extends HttpServlet{
 
 		}
 
+		if(name == null && password == null || name == null && password.equals("") || name == null && password.equals("") || name.equals("") && password == null ||
+				name.equals("") && password.equals("") || name.equals("") && password.equals(" ") || name.equals(" ") && password == null || 
+				name.equals(" ") && password.equals("") || name.equals(" ") && password.equals(" ")){
+
+			req.getRequestDispatcher("login.jsp").include(req, resp);
+			out.println("<font color=red><h2>" + "Come on dude! Write correctly" + "</h2></font>");
+			out.close();
+
+		}
+
+		if(name == null || name.equals("") || name == (" ")){
+
+			req.getRequestDispatcher("login.jsp").include(req, resp);
+			out.println("<font color=red><h2>" + "Are you crazy!?, No name!? come on dude write correctly!" + "</h2></font>");
+			out.close();
+
+		}
+
+		if(password == null || password.equals("") || password.equals(" ")){
+			req.getRequestDispatcher("login.jsp").include(req, resp);
+			out.println("<font color=red><h2>" + "Are you crazy!?, No password!? come on dude write correctly!" + "</h2></font>");
+			out.close();
+		}
+
 		else{
 			req.getRequestDispatcher("login.jsp").include(req, resp);
-			out.println("<font color=red>" + "Wrong name or password dude! Try again." + "</font>");
+			out.println("<font color=red><h2>" + "Wrong name or password dude! Try again." + "</h2></font>");
 
 		}
 		out.close();
@@ -70,11 +88,13 @@ public class LoginServlet extends HttpServlet{
 		doGet(req, resp);
 	}
 
+	/**
+	 *A boolean class, this ask the database if the name and password is true or false.
+	 */
+
 	public boolean validLogin(String email, String password, HttpServletRequest req) {
 
-
 		String sql = "SELECT * FROM user WHERE email=? AND password=?";
-
 		Connection conn = (Connection) getServletContext().getAttribute("DBConn");
 
 		try {
@@ -92,19 +112,11 @@ public class LoginServlet extends HttpServlet{
 			else {
 				return false;
 			}
-
-		} catch (SQLException e) {
+		} 
+		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
 	}
-
-
-
 }
-
-
-
-
-
